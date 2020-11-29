@@ -5,7 +5,7 @@ import scipy.signal
 
 
 
-def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.4, a_add_rate=0.055, b_add_rate=-0.47, plot_on=True):
+def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.25, a_add_rate=0.055, b_add_rate=-0.118, plot_on=True):
     kernel = np.array([[0, 1, 0],
                        [1, -4, 1],
                        [0, 1, 0]])
@@ -14,7 +14,7 @@ def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.4, a_add_rate=0.055, b_a
     b = 0.1 * np.random.random(grid_size)
 
 
-    a[grid_size[0]//2, grid_size[1]//2] += 0.4
+    a[grid_size[0]//2, grid_size[1]//2] += 0.1
 
     if plot_on:
         plt.figure()
@@ -27,7 +27,7 @@ def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.4, a_add_rate=0.055, b_a
         reaction = a * b**2
         a += div_a * ca - reaction + a_add_rate * (1-a)
         b += div_b * cb + reaction + b_add_rate * b
-        print(np.max(np.max(b)))
+        print(np.max(np.max(a)), np.max(np.max(b)))
 
     if plot_on:
         plt.figure()
@@ -39,4 +39,4 @@ def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.4, a_add_rate=0.055, b_a
         plt.show()
 
 if __name__ == '__main__':
-    reaction_diffusion(20, (200,200), plot_on=True)
+    reaction_diffusion(200, (200,200), plot_on=True)

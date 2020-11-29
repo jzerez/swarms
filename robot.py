@@ -10,7 +10,8 @@ class Robot(object):
         self.b = b
         self.ca, self.cb, self.a_add_rate, self.b_add_rate = rd_params
         # self.neighborRadius = neighborRadius
-        self.pos = np.array([[x, y]])
+        self.x = x
+        self.y = y
 
     def detectEdge(self):
         "returns true if agent is on edge"
@@ -22,11 +23,18 @@ class Robot(object):
 
     def updateChemicals(self):
         # later we can scale the diffusion by the distance?
-        neighborMeanA = np.mean([neighbor.a for neighbor in self.neighbors])
-        neighborMeanB = np.mean([neighbor.b for neighbor in self.neighbors])
-        reaction = a * b**2
-        self.a += (-self.a + neighborMeanA) * self.ca - reaction + self.a_add_rate * (1-a)
-        self.b += (-self.b + neighborMeanB) * self.cb + reaction + self.b_add_rate * b
+        neighborA = [neighbor.a for neighbor in self.neighbors]
+        neighborB = [neighbor.b for neighbor in self.neighbors]
+        while len(neighborA) < 4:
+            neighborA.append(0)
+        while len(neighborB) < 4:
+            neighborB.append(0)
+
+        reaction = self.a * self.b**2
+        divA = -self.a * 4 + sum(neighborA)
+        divB = -self.b * 4 + sum(neighborB)
+        self.a += divA * self.ca - reaction + self.a_add_rate * (1-self.a)
+        self.b += divB * self.cb + reaction + self.b_add_rate * self.b
 
     def getLEDValue(self):
         # finish this when we plot, map from a to col
