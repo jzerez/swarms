@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal
+import random
 
 class Robot(object):
     """docstring for Robot."""
@@ -12,12 +13,56 @@ class Robot(object):
         # self.neighborRadius = neighborRadius
         self.x = x
         self.y = y
+        self.lastX = None
+        self.lastY = None
 
     def detectEdge(self):
         "returns true if agent is on edge"
         pass
 
+<<<<<<< HEAD
     def setDivergence(self):
+=======
+    def move(self):
+        matchedCells = np.zeros((3,3))
+        circleGrid =       [(0,0),
+                            (0,1),
+                            (0,2),
+                            (1,2),
+                            (2,2),
+                            (2,1),
+                            (2,0),
+                            (1,0)]
+        for i in range(8):
+            if(isinstance(self.gridAround[circleGrid[i][0]][circleGrid[i][1]],Robot)):
+                if(i == 0):
+                    matchedCells[circleGrid[7][0]][circleGrid[7][1]] = 1
+                else:
+                    matchedCells[circleGrid[i-1][0]][circleGrid[i-1][1]] = 1
+                if(i == 7):
+                    matchedCells[circleGrid[0][0]][circleGrid[0][1]] = 1
+                else:
+                    matchedCells[circleGrid[i+1][0]][circleGrid[i+1][1]] = 1
+        matchedCells[(self.lastX-self.x)+1][(self.lastY-self.y)+1] = 0
+        matches = np.nonzero(matchedCells)
+        index = random.randint(0,len(matches)-1)
+        self.lastX = self.x
+        self.lastY = self.y
+        self.x = self.x+matches[0][index]-1
+        self.y = self.y+matches[1][index]-1
+        return (self.x,self.y)
+
+    def setGridAround(self,gridAround):
+        "I want this to be a 3x3 around the robot"
+        self.gridAround = gridAround
+
+    def setNeighbors(self,neighbors):
+        "sets the internal neighbors"
+        self.neighbors = neighbors
+
+    def updateChemicals(self):
+        # later we can scale the diffusion by the distance?
+>>>>>>> 1d1a27d47773e65958f8b8e900b0fa988d2180dd
         neighborA = [neighbor.a for neighbor in self.neighbors]
         neighborB = [neighbor.b for neighbor in self.neighbors]
         while len(neighborA) < 4:
