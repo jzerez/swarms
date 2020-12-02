@@ -20,9 +20,6 @@ class Robot(object):
         "returns true if agent is on edge"
         pass
 
-<<<<<<< HEAD
-    def setDivergence(self):
-=======
     def move(self):
         matchedCells = np.zeros((3,3))
         circleGrid =       [(0,0),
@@ -62,7 +59,6 @@ class Robot(object):
 
     def updateChemicals(self):
         # later we can scale the diffusion by the distance?
->>>>>>> 1d1a27d47773e65958f8b8e900b0fa988d2180dd
         neighborA = [neighbor.a for neighbor in self.neighbors]
         neighborB = [neighbor.b for neighbor in self.neighbors]
         while len(neighborA) < 4:

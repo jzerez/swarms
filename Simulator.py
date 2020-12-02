@@ -37,12 +37,8 @@ class Simulator(object):
         directions = [(0,1),(1,0),(-1,0),(0,-1)]
         neighbors = [self.grid[robot.x+x][robot.y+y] for x,y in directions if isinstance(self.grid[robot.x+x][robot.y+y], Robot)]
         robot.setNeighbors(neighbors)
-<<<<<<< HEAD
-        robot.setDivergence()
-=======
         gridAround = self.grid[robot.x-1:robot.x+1][robot.y-1:robot.y+1]
         robot.setGridAround(gridAround)
->>>>>>> 1d1a27d47773e65958f8b8e900b0fa988d2180dd
 
     def updateSimulation(self, i):
         print(i)
@@ -77,7 +73,6 @@ class Simulator(object):
         # rc('animation', html='html5')
 
         fig = plt.figure()
-<<<<<<< HEAD
         anim = FuncAnimation(fig, self.updateSimulation, init_func=self.initPlot, frames=200, repeat=False)
         
         Writer = writers['imagemagick']
@@ -85,15 +80,6 @@ class Simulator(object):
         anim.save('0.2_0.25_0.055_-0.117_200_frames.gif', writer=writer)
         # plt.show()
         
-=======
-        anim = FuncAnimation(fig, self.updateSimulation, init_func=self.initPlot, frames=150, repeat=False)
-
-        Writer = writers['imagemagick']
-        writer = Writer(fps=15, metadata=dict(artist='Me'), bitrate=1800)
-        anim.save('0.45_0.3_0.035_-0.067_150frames.gif', writer=writer)
-        plt.show()
-
->>>>>>> 1d1a27d47773e65958f8b8e900b0fa988d2180dd
 
 
 if __name__ == '__main__':
