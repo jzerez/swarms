@@ -13,63 +13,57 @@ class Robot(object):
         # self.neighborRadius = neighborRadius
         self.x = x
         self.y = y
-        self.lastX = None
-        self.lastY = None
+        self.divA = 0
+        self.divB = 0
+        self.lastX = x
+        self.lastY = y
+        self.kernel = np.array([[.05, .2, .05],
+                                [ .2, -1, .2],
+                                [.05, .2, .05]])
 
     def detectEdge(self):
         "returns true if agent is on edge"
-        pass
+        vec_neighbor = np.vectorize(lambda x: 1 if isinstance(x, Robot) else 0, otypes=[np.float32])
+        kernel = np.array([[0, -1, 0],
+                           [-1, 4, -1],
+                           [0, -1, 0]])
+        adj_neighbors = vec_neighbor(self.neighbors)
+        return (adj_neighbors * kernel).sum() > 0
+
 
     def move(self):
-        matchedCells = np.zeros((3,3))
-        circleGrid =       [(0,0),
-                            (0,1),
-                            (0,2),
-                            (1,2),
-                            (2,2),
-                            (2,1),
-                            (2,0),
-                            (1,0)]
-        for i in range(8):
-            if(isinstance(self.gridAround[circleGrid[i][0]][circleGrid[i][1]],Robot)):
-                if(i == 0):
-                    matchedCells[circleGrid[7][0]][circleGrid[7][1]] = 1
-                else:
-                    matchedCells[circleGrid[i-1][0]][circleGrid[i-1][1]] = 1
-                if(i == 7):
-                    matchedCells[circleGrid[0][0]][circleGrid[0][1]] = 1
-                else:
-                    matchedCells[circleGrid[i+1][0]][circleGrid[i+1][1]] = 1
-        matchedCells[(self.lastX-self.x)+1][(self.lastY-self.y)+1] = 0
-        matches = np.nonzero(matchedCells)
-        index = random.randint(0,len(matches)-1)
+        matchKernel = np.array([[0,1,0],
+                                [1,-10,1],
+                                [0,1,0]])
+        vec_neighbor = np.vectorize(lambda x: 1 if isinstance(x, Robot) else 0, otypes=[np.int])
+        robot_neighbors = vec_neighbor(self.neighbors)
+        robot_neighbors[1][1] = 0
+        matchedCells = scipy.signal.correlate2d(robot_neighbors, matchKernel, mode='same')
+        matchedCells[(self.lastX-self.x)+1][(self.lastY-self.y)+1] = -1
+        matches = np.where(matchedCells > 0)
+
+
+        index = random.randint(0,len(matches[0])-1)
         self.lastX = self.x
         self.lastY = self.y
         self.x = self.x+matches[0][index]-1
         self.y = self.y+matches[1][index]-1
         return (self.x,self.y)
 
-    def setGridAround(self,gridAround):
-        "I want this to be a 3x3 around the robot"
-        self.gridAround = gridAround
-
     def setNeighbors(self,neighbors):
         "sets the internal neighbors"
         self.neighbors = neighbors
 
-    def updateChemicals(self):
+    def setDivergence(self):
         # later we can scale the diffusion by the distance?
-        neighborA = [neighbor.a for neighbor in self.neighbors]
-        neighborB = [neighbor.b for neighbor in self.neighbors]
-        while len(neighborA) < 4:
-            neighborA.append(0)
-        while len(neighborB) < 4:
-            neighborB.append(0)
-        self.divA = -self.a * 4 + sum(neighborA)
-        self.divB = -self.b * 4 + sum(neighborB)
+        divA = np.vectorize(lambda x: x.a if isinstance(x, Robot) else 0, otypes=[np.float32])
+        divB = np.vectorize(lambda x: x.b if isinstance(x, Robot) else 0, otypes=[np.float32])
+        self.divA = (divA(self.neighbors) * self.kernel).sum()
+        self.divB = (divB(self.neighbors) * self.kernel).sum()
+
 
     def setNeighbors(self,neighbors):
-        "sets the internal neighbors"        
+        "sets the internal neighbors"
         self.neighbors = neighbors
 
     def updateChemicals(self):

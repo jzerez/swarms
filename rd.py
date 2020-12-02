@@ -41,7 +41,7 @@ def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.25, a_add_rate=0.055, b_
         # plt.show()
 
 if __name__ == '__main__':
-    for nsteps in [4500]:
+    for nsteps in [200]:
         reaction_diffusion(nsteps, (100,100), ca=0.4, cb=0.2, a_add_rate=0.039, b_add_rate=-0.104, plot_on=True)
         # reaction_diffusion(nsteps, (100,100), ca=0.4, cb=0.2, a_add_rate=0.055, b_add_rate=-0.117, plot_on=True)
     plt.show()
