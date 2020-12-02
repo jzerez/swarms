@@ -17,24 +17,34 @@ class Robot(object):
         "returns true if agent is on edge"
         pass
 
-    def setNeighbors(self,neighbors):
-        "sets the internal neighbors"
-        self.neighbors = neighbors
-
-    def updateChemicals(self):
-        # later we can scale the diffusion by the distance?
+    def setDivergence(self):
         neighborA = [neighbor.a for neighbor in self.neighbors]
         neighborB = [neighbor.b for neighbor in self.neighbors]
         while len(neighborA) < 4:
             neighborA.append(0)
         while len(neighborB) < 4:
             neighborB.append(0)
+        self.divA = -self.a * 4 + sum(neighborA)
+        self.divB = -self.b * 4 + sum(neighborB)
+
+    def setNeighbors(self,neighbors):
+        "sets the internal neighbors"        
+        self.neighbors = neighbors
+
+    def updateChemicals(self):
+        # later we can scale the diffusion by the distance?
+        # neighborA = [neighbor.a for neighbor in self.neighbors]
+        # neighborB = [neighbor.b for neighbor in self.neighbors]
+        # while len(neighborA) < 4:
+        #     neighborA.append(0)
+        # while len(neighborB) < 4:
+        #     neighborB.append(0)
 
         reaction = self.a * self.b**2
-        divA = -self.a * 4 + sum(neighborA)
-        divB = -self.b * 4 + sum(neighborB)
-        self.a += divA * self.ca - reaction + self.a_add_rate * (1-self.a)
-        self.b += divB * self.cb + reaction + self.b_add_rate * self.b
+        # divA = -self.a * 4 + sum(neighborA)
+        # divB = -self.b * 4 + sum(neighborB)
+        self.a += self.divA * self.ca - reaction + self.a_add_rate * (1-self.a)
+        self.b += self.divB * self.cb + reaction + self.b_add_rate * self.b
 
     def getLEDValue(self):
         # finish this when we plot, map from a to col
