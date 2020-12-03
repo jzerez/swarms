@@ -20,23 +20,37 @@ class Robot(object):
         self.kernel = np.array([[.05, .2, .05],
                                 [ .2, -1, .2],
                                 [.05, .2, .05]])
+        self.isOnEdge = False
+
+    def getRobotNeighbors(self, attr=None, dtype=np.int):
+        if attr is None:
+            vec = np.vectorize(lambda x: 1 if isinstance(x, Robot) else 0, otypes=[dtype])
+        else:
+            vec = np.vectorize(lambda x: getattr(x, attr) if isinstance(x, Robot) else 0, otypes=[dtype])
+
+        return vec(self.neighbors)
 
     def detectEdge(self):
         "returns true if agent is on edge"
-        vec_neighbor = np.vectorize(lambda x: 1 if isinstance(x, Robot) else 0, otypes=[np.float32])
+        adj_neighbors = self.getRobotNeighbors()
         kernel = np.array([[0, -1, 0],
                            [-1, 4, -1],
                            [0, -1, 0]])
-        adj_neighbors = vec_neighbor(self.neighbors)
         return (adj_neighbors * kernel).sum() > 0
+        
+    def isDissatisfied(self):
+        for neighbor in self.neighbors.ravel():
+            if(neighbor != 0):
+                if(neighbor.b >= 0.2):
+                    return False
+        return True
 
 
     def move(self):
         matchKernel = np.array([[0,1,0],
                                 [1,-10,1],
                                 [0,1,0]])
-        vec_neighbor = np.vectorize(lambda x: 1 if isinstance(x, Robot) else 0, otypes=[np.int])
-        robot_neighbors = vec_neighbor(self.neighbors)
+        robot_neighbors = self.getRobotNeighbors()
         robot_neighbors[1][1] = 0
         matchedCells = scipy.signal.correlate2d(robot_neighbors, matchKernel, mode='same')
         matchedCells[(self.lastX-self.x)+1][(self.lastY-self.y)+1] = -1
@@ -55,40 +69,23 @@ class Robot(object):
         self.neighbors = neighbors
 
     def setDivergence(self):
-        # later we can scale the diffusion by the distance?
-        divA = np.vectorize(lambda x: x.a if isinstance(x, Robot) else 0, otypes=[np.float32])
-        divB = np.vectorize(lambda x: x.b if isinstance(x, Robot) else 0, otypes=[np.float32])
-        self.divA = (divA(self.neighbors) * self.kernel).sum()
-        self.divB = (divB(self.neighbors) * self.kernel).sum()
+        neighborA = self.getRobotNeighbors('a', np.float32)
+        neighborB = self.getRobotNeighbors('b', np.float32)
 
+        self.divA = (neighborA * self.kernel).sum()
+        self.divB = (neighborB * self.kernel).sum()
 
-    def setNeighbors(self,neighbors):
-        "sets the internal neighbors"
-        self.neighbors = neighbors
 
     def updateChemicals(self):
-        # later we can scale the diffusion by the distance?
-        # neighborA = [neighbor.a for neighbor in self.neighbors]
-        # neighborB = [neighbor.b for neighbor in self.neighbors]
-        # while len(neighborA) < 4:
-        #     neighborA.append(0)
-        # while len(neighborB) < 4:
-        #     neighborB.append(0)
-
         reaction = self.a * self.b**2
-        # divA = -self.a * 4 + sum(neighborA)
-        # divB = -self.b * 4 + sum(neighborB)
+
         self.a += self.divA * self.ca - reaction + self.a_add_rate * (1-self.a)
         self.b += self.divB * self.cb + reaction + self.b_add_rate * self.b
-
+    
     def getLEDValue(self):
         # finish this when we plot, map from a to col
         return self.a
 
     def calcMoves(self):
         "returns list of empty squares to move to"
-
-    def move(self):
-        "calculates where to move, then moves agent. no return value"
-        moves = self.calc_moves()
         pass
