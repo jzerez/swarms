@@ -54,7 +54,10 @@ class Robot(object):
         robot_neighbors[1][1] = 0
         matchedCells = scipy.signal.correlate2d(robot_neighbors, matchKernel, mode='same')
         matchedCells[(self.lastX-self.x)+1][(self.lastY-self.y)+1] = -1
+        matchedCells[1][1] = -1
         matches = np.where(matchedCells > 0)
+        for i in range(len(matches[0])):
+            print("(",matches[0][i],matches[1][i],end=") , ")
 
 
         index = random.randint(0,len(matches[0])-1)
