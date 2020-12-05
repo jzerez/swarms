@@ -8,6 +8,7 @@ from robot import Robot
 import time
 from matplotlib.animation import FuncAnimation, writers
 
+
 class Simulator(object):
     """docstring for Simulator."""
 
@@ -36,7 +37,7 @@ class Simulator(object):
         offset = (self.gridSize - self.sideLength) // 2
         robots = np.zeros((self.sideLength, self.sideLength), dtype=np.object)
 
-        def inCenter(coor, r=10):
+        def inCenter(coor, r=8):
             return abs(coor - self.sideLength / 2) < self.sideLength / r
 
         for x in range(self.sideLength):
@@ -58,81 +59,101 @@ class Simulator(object):
         "finds the visible neighbors of a robot. No return value"
         neighbors = self.grid[robot.x-1:robot.x+2, robot.y-1:robot.y+2]
         robot.setNeighbors(neighbors)
-
+    
     def updateSimulation(self):
         self.time += 1
         if self.time % self.stepsPerChemicalUpdate == 0:
-            for robot in self.robots:
-                self.calcNeighbors(robot)
-            for robot in self.robots:
-                robot.setDivergence()
-                robot.updateChemicals()
+            self.processChemicals()
         if self.time % self.stepsPerRobotMovement == 0:
-            # If there is no moving robot, pick a new one
-            if not self.movingRobot:
-                dissatisfiedRobots = []
-                for edgeRobot in self.edgeRobots:
-                    if(edgeRobot.isDissatisfied()):
-                        dissatisfiedRobots.append(edgeRobot)
-                self.movingRobot = np.random.choice(dissatisfiedRobots,1)[0]
+            self.processMovement()
+    
+    def processChemicals(self):
+        for robot in self.robots:
+            robot.setDivergence()
+            robot.updateChemicals()
+                
+    def processMovement(self):
+        # If there is no moving robot, pick a new one
+        if not self.movingRobot:
+            self.pickNewMovingRobot() 
+        changedNeighbors = self.moveRobot()              
+        self.updateOnEdge(changedNeighbors)          
+        # Check if the robot is satisfied
+        if(self.movingRobot.isSatisfied()):
+            self.movingRobot = None
 
-            # Move the robot
-            oldNeighbors = self.movingRobot.neighbors.ravel()
-            self.grid[self.movingRobot.x][self.movingRobot.y] = 0
-            self.movingRobot.move()
-            self.grid[self.movingRobot.x][self.movingRobot.y] = self.movingRobot
-            self.calcNeighbors(self.movingRobot)
-            newNeighbors = self.movingRobot.neighbors.ravel()
- 
-            allNeighbors = set(oldNeighbors).union(set(newNeighbors))
-            # Update isOnEdge attribute of neighbors of moving robot
-            for neighbor in allNeighbors:
-                if isinstance(neighbor, Robot):
-                    self.calcNeighbors(neighbor)
-                    onEdge = neighbor.isOnEdge
-                    if onEdge:
-                        self.edgeRobots.add(neighbor)
-                    elif neighbor in self.edgeRobots:
-                        self.edgeRobots.remove(neighbor)
+    def pickNewMovingRobot(self):         
+        dissatisfiedRobots = []
+        for edgeRobot in self.edgeRobots:
+            if(not edgeRobot.isSatisfied()):
+                dissatisfiedRobots.append(edgeRobot)
+        self.movingRobot = np.random.choice(dissatisfiedRobots,1)[0]
 
-            # Check if the robot is satisfied
-            if(not self.movingRobot.isDissatisfied()):
-                self.movingRobot = None
+    def moveRobot(self):
+        # Move the robot
+        oldNeighbors = self.movingRobot.neighbors.ravel()
+        self.grid[self.movingRobot.x][self.movingRobot.y] = 0
+        self.movingRobot.move()
+        self.grid[self.movingRobot.x][self.movingRobot.y] = self.movingRobot
+        self.calcNeighbors(self.movingRobot)
+        newNeighbors = self.movingRobot.neighbors.ravel()
 
+        return set(oldNeighbors).union(set(newNeighbors))
+
+    def updateOnEdge(self,changedNeighbors):
+        # Update isOnEdge attribute of neighbors of moving robot
+        for neighbor in changedNeighbors:
+            if isinstance(neighbor, Robot):
+                self.calcNeighbors(neighbor)
+                onEdge = neighbor.detectEdge()
+                if onEdge:
+                    self.edgeRobots.add(neighbor)
+                elif neighbor in self.edgeRobots:
+                    self.edgeRobots.remove(neighbor)
+    # @profile
     def plottableGrid(self, grid):
-        vectorized_grid = np.vectorize(lambda x: x.b if isinstance(x, Robot) else -1, otypes=[np.float32])
-        return vectorized_grid(grid)
+        # vectorized_grid = np.vectorize(lambda x: x.b if isinstance(x, Robot) else -1, otypes=[np.float32])
+        # return vectorized_grid(grid)
+        res = []
+        for elem in self.grid.flat:
+            if elem == 0:
+                res.append(elem)
+            else:
+                res.append(elem.b)
+        return np.array(res).reshape(self.grid.size)
+
 
     def initPlot(self):
         plotGrid = self.plottableGrid(self.grid)
-        mask = plotGrid < 0
-        with sns.axes_style("white"):
-            sns.heatmap(plotGrid, mask = mask, vmax = 1, vmin=0)
+        maskedGrid = np.ma.masked_where(plotGrid < 0, plotGrid)
+        plottedGrid = self.ax.imshow(maskedGrid, vmin=0, vmax=1)
+        self.fig.colorbar(plottedGrid)
+        # with sns.axes_style("white"):
+        #     self.ax = sns.heatmap(plotGrid, mask = mask, vmax = 1, vmin=0)
 
 
     def main(self):
-        # rc('animation', html='html5')
-
-        fig = plt.figure()
+        self.fig, self.ax  = plt.subplots()
         def updateFrame(i):
             print(i)
             for _ in range(self.stepsPerFrame):
                 self.updateSimulation()
             plotGrid = self.plottableGrid(self.grid)
             mask = plotGrid < 0
-            with sns.axes_style("white"):
-                sns.heatmap(plotGrid, mask = mask, vmax = 1, cbar=False)
+            maskedGrid = np.ma.masked_where(plotGrid < 0, plotGrid)
+            self.ax.cla()
+            self.ax.imshow(maskedGrid, vmin=0, vmax=1)
         
-        anim = FuncAnimation(fig, updateFrame, init_func=self.initPlot, frames=self.nSteps//self.stepsPerFrame, repeat=False)
+        anim = FuncAnimation(self.fig, updateFrame, init_func=self.initPlot, frames=self.nSteps//self.stepsPerFrame, repeat=False)
 
-        # Writer = writers['imagemagick']
-        # writer = Writer(fps=20, metadata=dict(artist='Me'), bitrate=1800)
-        # anim.save('0.4_0.2_0.039_-0.104_2000_frames_b.gif', writer=writer)
-        plt.show()
+        Writer = writers['imagemagick']
+        writer = Writer(fps=30, metadata=dict(artist='Me'), bitrate=1800)
+        anim.save('0.4_0.2_0.039_-0.104_5000_frames_b.gif', writer=writer)
+        # plt.show()
 
 
 
 if __name__ == '__main__':
-    sim = Simulator(nSteps = 400, gridSize=60, rdParams=[0.4,0.2,0.039,-0.104],sideLength=50, stepsPerFrame=1)
+    sim = Simulator(nSteps = 500, gridSize=75, rdParams=[0.4,0.2,0.039,-0.104],sideLength=40, stepsPerFrame=50)
 
     sim.main()

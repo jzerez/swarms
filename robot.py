@@ -20,6 +20,12 @@ class Robot(object):
         self.kernel = np.array([[.05, .2, .05],
                                 [ .2, -1, .2],
                                 [.05, .2, .05]])
+        self.matchKernel = np.array([[0,1,0],
+                                     [1,-10,1],
+                                     [0,1,0]])
+        self.edgeKernel = np.array([[0, -1, 0],
+                                    [-1, 4, -1],
+                                    [0, -1, 0]])
         self.isOnEdge = False
 
     def getRobotNeighbors(self, attr=None, dtype=np.int):
@@ -33,33 +39,23 @@ class Robot(object):
     def detectEdge(self):
         "returns true if agent is on edge"
         adj_neighbors = self.getRobotNeighbors()
-        kernel = np.array([[0, -1, 0],
-                           [-1, 4, -1],
-                           [0, -1, 0]])
-        return (adj_neighbors * kernel).sum() > 0
+        return (adj_neighbors * self.edgeKernel).sum() > 0
         
-    def isDissatisfied(self):
+    def isSatisfied(self):
         for neighbor in self.neighbors.ravel():
             if(neighbor != 0):
                 if(neighbor.b >= 0.2):
-                    return False
-        return True
+                    return True
+        return False
 
 
     def move(self):
-        matchKernel = np.array([[0,1,0],
-                                [1,-10,1],
-                                [0,1,0]])
         robot_neighbors = self.getRobotNeighbors()
         robot_neighbors[1][1] = 0
-        matchedCells = scipy.signal.correlate2d(robot_neighbors, matchKernel, mode='same')
+        matchedCells = scipy.signal.correlate2d(robot_neighbors, self.matchKernel, mode='same')
         matchedCells[(self.lastX-self.x)+1][(self.lastY-self.y)+1] = -1
         matchedCells[1][1] = -1
         matches = np.where(matchedCells > 0)
-        for i in range(len(matches[0])):
-            print("(",matches[0][i],matches[1][i],end=") , ")
-
-
         index = random.randint(0,len(matches[0])-1)
         self.lastX = self.x
         self.lastY = self.y
@@ -72,12 +68,13 @@ class Robot(object):
         self.neighbors = neighbors
 
     def setDivergence(self):
-        neighborA = self.getRobotNeighbors('a', np.float32)
-        neighborB = self.getRobotNeighbors('b', np.float32)
+        self.divA = 0
+        self.divB = 0
 
-        self.divA = (neighborA * self.kernel).sum()
-        self.divB = (neighborB * self.kernel).sum()
-
+        for kernelVal, neighbor in zip(self.kernel.flat, self.neighbors.flat):
+            if neighbor != 0:
+                self.divA += neighbor.a * kernelVal
+                self.divB += neighbor.b * kernelVal
 
     def updateChemicals(self):
         reaction = self.a * self.b**2
@@ -88,7 +85,3 @@ class Robot(object):
     def getLEDValue(self):
         # finish this when we plot, map from a to col
         return self.a
-
-    def calcMoves(self):
-        "returns list of empty squares to move to"
-        pass
