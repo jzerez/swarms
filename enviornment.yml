@@ -1,0 +1,5 @@
+name: swarm_environment
+dependencies:
+  - numpy
+  - matplotlib
+  - scipy
