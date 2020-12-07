@@ -3,6 +3,7 @@
 #### Jonathan Zerez
 #### SCI-1299  |  Fall, 2020
 
+[Link to binder](https://mybinder.org/v2/gh/jzerez/swarms/bio?filepath=Bio%20Project.ipynb)
 
 ## Introduction
 It is easy see the immense complexity of life on earth and wonder how it all came to be. Especially in multicellular organisms, the level of complexity is astounding, as individual subcomponents all must work together in perfect harmony in order to keep the organism alive. How can individual cells work together to form tissues, which form organs, which perform vital tasks for the organism? These individual cells have no knowledge of their role in the greater picture, and yet they are able to form these complex tissues and organs. This emergent behavior is called Morphogenesis.  From [Wikipedia](https://en.wikipedia.org/wiki/Morphogenesis), *''Morphogenesis is the biological process that causes a cell, tissue, or organism to develop its shape''*.
