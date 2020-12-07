@@ -8,6 +8,7 @@ from robot import Robot
 import time
 from matplotlib.animation import FuncAnimation, writers
 
+# TODO: what happens if we restrict diffusion that comes out of robots that are on the edge of the grid?
 
 class Simulator(object):
     """docstring for Simulator."""
@@ -20,6 +21,7 @@ class Simulator(object):
         self.sideLength = sideLength
 
         self.movingRobot = None
+        self.robots = []
         self.grid = self.initGrid()
 
         for robot in self.robots:
@@ -46,8 +48,11 @@ class Simulator(object):
                     b = 0.1
                 else:
                     b = 0.0
-                robots[x, y] = Robot(1.0, 0.1 * np.random.random() + b,x + offset,y + offset,self.rdParams)
-        self.robots = robots.ravel()
+                if((x-self.sideLength/2)**2 + (y-self.sideLength/2)**2 < (self.sideLength/2)**2):
+                    nextRobot = Robot(1.0, 0.1 * np.random.random() + b,x + offset,y + offset,self.rdParams)
+                    robots[x, y] = nextRobot
+                    self.robots.append(nextRobot)
+        # self.robots = robots.ravel()
         
         grid = np.zeros((self.gridSize, self.gridSize), dtype=object)
         firstInd = offset
@@ -60,13 +65,15 @@ class Simulator(object):
         neighbors = self.grid[robot.x-1:robot.x+2, robot.y-1:robot.y+2]
         robot.setNeighbors(neighbors)
     
+    # @profile
     def updateSimulation(self):
         self.time += 1
         if self.time % self.stepsPerChemicalUpdate == 0:
             self.processChemicals()
-        if self.time % self.stepsPerRobotMovement == 0:
-            self.processMovement()
+        # if self.time % self.stepsPerRobotMovement == 0:
+        #     self.processMovement()
     
+    # @profile
     def processChemicals(self):
         for robot in self.robots:
             robot.setDivergence()
@@ -110,17 +117,9 @@ class Simulator(object):
                     self.edgeRobots.add(neighbor)
                 elif neighbor in self.edgeRobots:
                     self.edgeRobots.remove(neighbor)
-    # @profile
     def plottableGrid(self, grid):
-        # vectorized_grid = np.vectorize(lambda x: x.b if isinstance(x, Robot) else -1, otypes=[np.float32])
-        # return vectorized_grid(grid)
-        res = []
-        for elem in self.grid.flat:
-            if elem == 0:
-                res.append(elem)
-            else:
-                res.append(elem.b)
-        return np.array(res).reshape(self.grid.size)
+        vectorized_grid = np.vectorize(lambda x: x.b if isinstance(x, Robot) else -1, otypes=[np.float32])
+        return vectorized_grid(grid)
 
 
     def initPlot(self):
@@ -134,6 +133,7 @@ class Simulator(object):
 
     def main(self):
         self.fig, self.ax  = plt.subplots()
+
         def updateFrame(i):
             print(i)
             for _ in range(self.stepsPerFrame):
@@ -148,12 +148,13 @@ class Simulator(object):
 
         Writer = writers['imagemagick']
         writer = Writer(fps=30, metadata=dict(artist='Me'), bitrate=1800)
-        anim.save('0.4_0.2_0.039_-0.104_5000_frames_b.gif', writer=writer)
+        # anim.save('0.4_0.2_0.039_-0.104_5000_frames_b_new.gif', writer=writer)
+        anim.save('delete_me.gif', writer=writer)
         # plt.show()
 
 
 
 if __name__ == '__main__':
-    sim = Simulator(nSteps = 500, gridSize=75, rdParams=[0.4,0.2,0.039,-0.104],sideLength=40, stepsPerFrame=50)
+    sim = Simulator(nSteps = 10000, gridSize=75, rdParams=[0.4,0.2,0.039,-0.104],sideLength=35, stepsPerFrame=100)
 
     sim.main()

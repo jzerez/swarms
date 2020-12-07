@@ -1,0 +1,8 @@
+# Blog Post 2
+### Introduction
+Since the last blog post, we've been hard at work on our project, implementing an agent based simulation to visualize reaction-diffusion patterns. While using numpy arrays allows us to leverage computationally efficient computing methods, we need an agent based model if we want to implement swarm behavior. One of the drawbacks of this modeling approach is that it is a lot slower than our initial simple implementation in `rd.py` with solely numpy arrays. In line with our learning goal of writing code with a focus on optimization, we took a step back to evaluate and improve our code's runtime.
+
+### Analyzing the Runtime
+To analyze the runtime, we remembered a lecture back in Software Design a couple years ago that used a package called [Line Profiler](https://pypi.org/project/line-profiler/). With this package, you can get data on the runtime of functions as you run the code. You can see examples below. To start, we looked at our main function 'updateSimulation'. We hypothesized that our robot movement code was taking the most time, but were surprised whet it turned out the process chemicals code was taking over 99% of the total runtime. After analyzing the process chemicals code, we found that the setting the divergence in each robot from its neighbors took about 90% of that function. Based on that, we tried to optimize the code that set the divergence.
+
+### Optimizing the Runtime
