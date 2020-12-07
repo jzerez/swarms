@@ -2,16 +2,31 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal
+from matplotlib.animation import FuncAnimation, writers
 
-
-
-def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.25, a_add_rate=0.055, b_add_rate=-0.118, plot_on=True):
+def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.25, a_add_rate=0.055, b_add_rate=-0.118, plot_on=True, animate=False, steps_per_frame=50):
     kernel = np.array([[.05, .2, .05],
                        [ .2, -1, .2],
                        [.05, .2, .05]])
 
     a = np.ones(grid_size, dtype=float)
     b = 0.1 * np.random.random(grid_size)
+
+    def take_step(a, b, kernel, ca, cb, a_add_rate, b_add_rate):
+        div_a = scipy.signal.correlate2d(a, kernel, mode='same', boundary='wrap')
+        div_b = scipy.signal.correlate2d(b, kernel, mode='same', boundary='wrap')
+        reaction = a * b**2
+        a += div_a * ca - reaction + a_add_rate * (1-a)
+        b += div_b * cb + reaction + b_add_rate * b
+        return a, b
+        # print(np.max(np.max(a)), np.max(np.max(b)))
+
+    def take_steps(i):
+        for _ in range(steps_per_frame):
+            a,b = take_step(a, b, kernel, ca, cb, a_add_rate, b_add_rate)
+            plt.imshow(a, vmin=0, vmax=1)
+    def initPlot():
+        plt.imshow(a, vmin=0, vmax=1)
 
     spx = grid_size[0]//2
     spy = grid_size[1]//2
@@ -23,25 +38,26 @@ def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.25, a_add_rate=0.055, b_
     #     plt.imshow(a)
     #     plt.colorbar()
 
-    for step in range(n_steps):
-        div_a = scipy.signal.correlate2d(a, kernel, mode='same')
-        div_b = scipy.signal.correlate2d(b, kernel, mode='same')
-        reaction = a * b**2
-        a += div_a * ca - reaction + a_add_rate * (1-a)
-        b += div_b * cb + reaction + b_add_rate * b
-        # print(np.max(np.max(a)), np.max(np.max(b)))
-
-    if plot_on:
-        plt.figure()
-        plt.imshow(a)
-        plt.colorbar()
-        title = str(n_steps) + ' time steps'
-        plt.title(title)
+    # for step in range(n_steps):
+    #     take_step(a, b, kernel, ca, cb, a_add_rate, b_add_rate)
+    fig = plt.figure()
+    anim = FuncAnimation(fig, take_steps, init_func=initPlot, frames=n_steps, repeat=False)
+    Writer = writers['imagemagick']
+    writer = Writer(fps=30, metadata=dict(artist='Me'), bitrate=1800)
+    anim.save('dots1.gif', writer=writer)
+        #
+    # if plot_on:
+    #     plt.figure()
+    #     plt.imshow(a)
+    #     plt.colorbar()
+    #     title = str(n_steps) + ' time steps'
+    #     plt.title(title)
 
         # plt.show()
 
+
 if __name__ == '__main__':
-    for nsteps in [4500]:
-        reaction_diffusion(nsteps, (100,100), ca=0.4, cb=0.2, a_add_rate=0.039, b_add_rate=-0.104, plot_on=True)
+    for nsteps in [5000]:
+        reaction_diffusion(nsteps, (100,100), ca=0.4, cb=0.2, a_add_rate=0.039, b_add_rate=-0.104, plot_on=False, animate=True)
         # reaction_diffusion(nsteps, (100,100), ca=0.4, cb=0.2, a_add_rate=0.055, b_add_rate=-0.117, plot_on=True)
     plt.show()

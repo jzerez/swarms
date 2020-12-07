@@ -11,8 +11,8 @@ class fuck:
         self.grid_size = (50,50)
         self.ca=0.4
         self.cb=0.2
-        self.a_add_rate=0.039
-        self.b_add_rate=-0.104
+        self.a_add_rate=0.055
+        self.b_add_rate=-0.117
 
         self.kernel = np.array([[.05, .2, .05],
                                 [ .2, -1, .2],
@@ -24,7 +24,7 @@ class fuck:
         spx = self.grid_size[0]//2
         spy = self.grid_size[1]//2
         r=self.grid_size[0] // 20
-        self.b[spx-r:spx+r, spy-r:spy+r] += 0.1
+        self.b[spx-r:spx+r, spy-r:spy+r] += 0.2
 
 
 
@@ -50,7 +50,7 @@ class fuck:
         anim = FuncAnimation(fig, self.take_steps, init_func=self.initPlot, frames=self.n_steps//self.steps_per_frame, repeat=False)
         Writer = writers['imagemagick']
         writer = Writer(fps=35, metadata=dict(artist='Me'), bitrate=1800)
-        anim.save('dots1.gif', writer=writer)
+        anim.save('squiggles.gif', writer=writer)
 if __name__ == '__main__':
     f = fuck()
     f.run()
