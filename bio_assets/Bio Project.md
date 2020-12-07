@@ -1,6 +1,6 @@
 layout: page
-title: "PAGE TITLE"
-permalink: /URL-PATH/
+title: "REPORT"
+permalink: /bio/
 
 # Morphogenesis: How does complexity arise from relatively simple agents?
 
