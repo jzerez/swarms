@@ -1,3 +1,7 @@
+layout: page
+title: "PAGE TITLE"
+permalink: /URL-PATH/
+
 # Morphogenesis: How does complexity arise from relatively simple agents?
 
 #### Jonathan Zerez
