@@ -210,7 +210,7 @@ rd.plot_n_timesteps((3,3), 750, rd.a)
 ```
 
 
-![png](./bio_assets/output_16_0.png)
+![png](./bio_assets/output_14_0.png)
 
 
 Finally, here's an animation of the following pattern to see how similarly it resembles mitosis. **Beware! This cell takes a long time to run! If you don't really care about seeing the simulation create an animation in real time, I would not run the cell, especially because there is a gif of the pattern evolving already below**
@@ -222,7 +222,7 @@ rd.animate(rd.a, sleep_time=0, steps_per_frame=100)
 ```
 
 
-![png](./bio_assets/output_18_0.png)
+![png](./bio_assets/output_16_0.png)
 
 
 
