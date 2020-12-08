@@ -5,7 +5,7 @@
 
 
 ###### How to view this project:
-If you'd like, you can simply look through a static version of the project on [this website](https://jzerez.github.io/swarms/). If that's what you wish, then keep reading! If however, you'd like to run an interactive version of the project that can run code live, click on this [link to Binder!](https://gesis.mybinder.org/binder/v2/gh/jzerez/swarms/f575b4c56d370974b3ecb2c2a7f210dd49e71636). You'll be able to adjust parameters in Binder and see how they impact the patterns that form! Just be warned, it can take a little while to load, so be patient.
+If you'd like, you can simply look through a static version of the project on [this website](https://jzerez.github.io/swarms/). If that's what you wish, then keep reading! If however, you'd like to run an interactive version of the project that can run code live, click on this [link to Binder!](https://mybinder.org/v2/gh/jzerez/swarms/bio?filepath=Bio%20Project.ipynb). You'll be able to adjust parameters in Binder and see how they impact the patterns that form! Just be warned, it can take a little while to load, so be patient.
 
 If you choose to run the project in Binder, you can run cells of code by clicking on them and pressing the `Shift` and `Enter` keys at the same time. That will run the selected cell. Note that most cells refer to code that was run in previous cells. As such, running any cell requires all previous cells to be run as well in order to avoid any errors.
 
