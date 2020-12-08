@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.signal
 import random
-
+import copy
 class Robot(object):
     """docstring for Robot."""
 
@@ -29,6 +29,14 @@ class Robot(object):
         self.isOnEdge = False
 
     def getRobotNeighbors(self, attr=None, dtype=np.int):
+        # res = []
+        # for elem in self.neighbors.flat:
+        #     if elem == 0:
+        #         res.append(0)
+        #     else:
+        #         res.append(1)
+        # return np.array(res).reshape((3,3))
+
         if attr is None:
             vec = np.vectorize(lambda x: 1 if isinstance(x, Robot) else 0, otypes=[dtype])
         else:
@@ -44,7 +52,7 @@ class Robot(object):
     def isSatisfied(self):
         for neighbor in self.neighbors.ravel():
             if(neighbor != 0):
-                if(neighbor.b >= 0.2):
+                if(neighbor.b >= 0.06):
                     return True
         return False
 
@@ -52,10 +60,18 @@ class Robot(object):
     def move(self):
         robot_neighbors = self.getRobotNeighbors()
         robot_neighbors[1][1] = 0
+        # matched cells is a 3x3 where positive numbers are valid moves
         matchedCells = scipy.signal.correlate2d(robot_neighbors, self.matchKernel, mode='same')
-        matchedCells[(self.lastX-self.x)+1][(self.lastY-self.y)+1] = -1
+        # current position is invalid (impossible to not move)
         matchedCells[1][1] = -1
+
+        if len(matchedCells > 0) > 1:
+            # previous position is invalid and there are no other spots
+            matchedCells[(self.lastX-self.x)+1][(self.lastY-self.y)+1] = -1
+        
         matches = np.where(matchedCells > 0)
+        if len(matches[0]) - 1 < 0:
+            print('uhoh')
         index = random.randint(0,len(matches[0])-1)
         self.lastX = self.x
         self.lastY = self.y
@@ -75,6 +91,11 @@ class Robot(object):
             if neighbor != 0:
                 self.divA += neighbor.a * kernelVal
                 self.divB += neighbor.b * kernelVal
+            else:
+                # If there is no robot, pretend that the value is the same as the current grid space
+                # This effectively prevents chemicals from diffusing out 
+                self.divA += self.a * kernelVal
+                self.divB += self.b * kernelVal
 
     def updateChemicals(self):
         reaction = self.a * self.b**2

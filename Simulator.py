@@ -13,12 +13,16 @@ from matplotlib.animation import FuncAnimation, writers
 class Simulator(object):
     """docstring for Simulator."""
 
-    def __init__(self, nSteps, gridSize, rdParams, sideLength, shape="circle", stepsPerFrame=25, stepsPerChemicalUpdate=1, stepsPerRobotMovement=5):
+    def __init__(self, nSteps, gridSize, rdParams, sideLength, shape="circle", stepsPerFrame=25, stepsPerChemicalUpdate=1, stepsPerRobotMovement=2):
         # self.a, self.b = rd.reaction_diffusion(n_steps, grid_size, rd_params)
         self.rdParams = rdParams
         self.nSteps = nSteps
         self.gridSize = gridSize
         self.sideLength = sideLength
+        self.file_name = ""
+        for rdParam in rdParams:
+            self.file_name += str(rdParam) + "_"
+        self.file_name += str(nSteps)+"frames.gif"
 
         self.movingRobot = None
         self.robots = []
@@ -63,6 +67,7 @@ class Simulator(object):
     def calcNeighbors(self, robot):
         "finds the visible neighbors of a robot. No return value"
         neighbors = self.grid[robot.x-1:robot.x+2, robot.y-1:robot.y+2]
+        # TODO: if the middle element is a zero, then set breakpoint
         robot.setNeighbors(neighbors)
     
     # @profile
@@ -70,8 +75,9 @@ class Simulator(object):
         self.time += 1
         if self.time % self.stepsPerChemicalUpdate == 0:
             self.processChemicals()
-        # if self.time % self.stepsPerRobotMovement == 0:
-        #     self.processMovement()
+        if self.time % self.stepsPerRobotMovement == 0:
+            for i in range(4):
+                self.processMovement()
     
     # @profile
     def processChemicals(self):
@@ -148,13 +154,13 @@ class Simulator(object):
 
         Writer = writers['imagemagick']
         writer = Writer(fps=30, metadata=dict(artist='Me'), bitrate=1800)
-        # anim.save('0.4_0.2_0.039_-0.104_5000_frames_b_new.gif', writer=writer)
-        anim.save('delete_me.gif', writer=writer)
+        anim.save(self.file_name, writer=writer)
+        # anim.save('delete_me.gif', writer=writer)
         # plt.show()
 
 
 
 if __name__ == '__main__':
-    sim = Simulator(nSteps = 10000, gridSize=75, rdParams=[0.4,0.2,0.039,-0.104],sideLength=35, stepsPerFrame=100)
+    sim = Simulator(nSteps = 10000, gridSize=75, rdParams=(0.5,0.25,0.06,-0.124),sideLength=35, stepsPerFrame=100)
 
     sim.main()
