@@ -65,7 +65,7 @@ class Robot(object):
         # current position is invalid (impossible to not move)
         matchedCells[1][1] = -1
 
-        if len(matchedCells > 0) > 1:
+        if (matchedCells > 0).sum() > 1:
             # previous position is invalid and there are no other spots
             matchedCells[(self.lastX-self.x)+1][(self.lastY-self.y)+1] = -1
         

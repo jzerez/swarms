@@ -6,9 +6,8 @@ import scipy.signal
 import rd
 from robot import Robot
 import time
+import copy
 from matplotlib.animation import FuncAnimation, writers
-
-# TODO: what happens if we restrict diffusion that comes out of robots that are on the edge of the grid?
 
 class Simulator(object):
     """docstring for Simulator."""
@@ -66,7 +65,9 @@ class Simulator(object):
 
     def calcNeighbors(self, robot):
         "finds the visible neighbors of a robot. No return value"
-        neighbors = self.grid[robot.x-1:robot.x+2, robot.y-1:robot.y+2]
+        neighbors = copy.copy(self.grid[robot.x-1:robot.x+2, robot.y-1:robot.y+2])
+        if neighbors[1][1] == 0:
+            print('uhoh')
         # TODO: if the middle element is a zero, then set breakpoint
         robot.setNeighbors(neighbors)
     
@@ -104,12 +105,12 @@ class Simulator(object):
 
     def moveRobot(self):
         # Move the robot
-        oldNeighbors = self.movingRobot.neighbors.ravel()
+        oldNeighbors = self.movingRobot.neighbors.flatten()
         self.grid[self.movingRobot.x][self.movingRobot.y] = 0
         self.movingRobot.move()
         self.grid[self.movingRobot.x][self.movingRobot.y] = self.movingRobot
         self.calcNeighbors(self.movingRobot)
-        newNeighbors = self.movingRobot.neighbors.ravel()
+        newNeighbors = self.movingRobot.neighbors.flatten()
 
         return set(oldNeighbors).union(set(newNeighbors))
 
@@ -153,7 +154,7 @@ class Simulator(object):
         anim = FuncAnimation(self.fig, updateFrame, init_func=self.initPlot, frames=self.nSteps//self.stepsPerFrame, repeat=False)
 
         Writer = writers['imagemagick']
-        writer = Writer(fps=30, metadata=dict(artist='Me'), bitrate=1800)
+        writer = Writer(fps=45, metadata=dict(artist='Me'), bitrate=1800)
         anim.save(self.file_name, writer=writer)
         # anim.save('delete_me.gif', writer=writer)
         # plt.show()
@@ -161,6 +162,6 @@ class Simulator(object):
 
 
 if __name__ == '__main__':
-    sim = Simulator(nSteps = 10000, gridSize=75, rdParams=(0.5,0.25,0.06,-0.124),sideLength=35, stepsPerFrame=100)
+    sim = Simulator(nSteps = 80000, gridSize=75, rdParams=(0.5,0.25,0.06,-0.124),sideLength=35, stepsPerFrame=100)
 
     sim.main()
