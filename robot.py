@@ -23,9 +23,9 @@ class Robot(object):
         self.matchKernel = np.array([[0,1,0],
                                      [1,-10,1],
                                      [0,1,0]])
-        self.edgeKernel = np.array([[0, -1, 0],
-                                    [-1, 4, -1],
-                                    [0, -1, 0]])
+        self.edgeKernel = np.array([[-1, -1, -1],
+                                    [-1, 6, -1],
+                                    [-1, -1, -1]])
         self.isOnEdge = False
 
     def getRobotNeighbors(self, attr=None, dtype=np.int):
