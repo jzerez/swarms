@@ -1,3 +1,5 @@
+## [Home](https://jzerez.github.io/swarms/mainpage) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Blog Post 1](https://jzerez.github.io/swarms/blogpost1) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Blog Post 2](https://jzerez.github.io/swarms/blogpost2)
+
 # Blog Post 1
 ### Introduction
 So far, we've already implemented one of the key features of our project that will allow us to test and tune some algorithm specific parameters in a short amount of time. Specifically, we were able to implement a simplified reaction-diffusion simulation using 2D arrays in numpy. This is important to the project because we are planning on using reaction-diffusion patterns in order to influence how the agents move around and ultimately impact the final shape of the emergent pattern. In this post, we will describe some of the math and implementation details of the reaction-diffusion implementation, and show off some of the results that stem from a few input parameters.
