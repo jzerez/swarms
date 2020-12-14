@@ -129,10 +129,10 @@ class Simulator(object):
         self.time += 1
         if self.time % self.stepsPerChemicalUpdate == 0:
             self.processChemicals()
-        # if self.time % self.stepsPerRobotMovement == 0:
-        #     # Have agents move 4 times per "movement" event
-        #     for i in range(4):
-        #         self.processMovement()
+        if self.time % self.stepsPerRobotMovement == 0:
+            # Have agents move 4 times per "movement" event
+            for i in range(4):
+                self.processMovement()
     
     # @profile
     def processChemicals(self):
@@ -211,7 +211,16 @@ class Simulator(object):
         Returns:
             list(list(int))
         """
-        vectorized_grid = np.vectorize(lambda x: x.b if isinstance(x, Robot) else -1, otypes=[np.float32])
+        def filter(x):
+            if isinstance(x, Robot):
+                return x.b
+                # if x in self.edgeRobots:
+                #     return 1
+                # else:
+                #     return x.b
+            else:
+                return -1
+        vectorized_grid = np.vectorize(lambda x: filter(x), otypes=[np.float32])
         return vectorized_grid(grid)
 
 
@@ -252,7 +261,5 @@ class Simulator(object):
 
 
 if __name__ == '__main__':
-    sim = Simulator(nSteps = 10000, gridSize=75, rdParams=(0.4,0.19,0.041,-0.104),sideLength=35, stepsPerFrame=150, stepsPerChemicalUpdate=1)
-
-
+    sim = Simulator(nSteps = 10100, gridSize=75, rdParams=(0.43,0.19,0.035,-0.100),sideLength=35, stepsPerFrame=50, stepsPerChemicalUpdate=1)
     sim.main()

@@ -20,10 +20,10 @@ def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.25, a_add_rate=0.055, b_
     r=grid_size[0] // 8
     b[spx-r:spx+r, spy-r:spy+r] *= 0.1
     # b[r:r+r, r:r+r] += 0.1
-    if plot_on:
-        plt.figure()
-        plt.imshow(b)
-        plt.colorbar()
+    # if plot_on:
+    #     plt.figure()
+    #     plt.imshow(b)
+    #     plt.colorbar()
 
     for step in range(n_steps):
         div_a = scipy.signal.correlate2d(a, kernel, mode='same')
@@ -43,8 +43,11 @@ def reaction_diffusion(n_steps, grid_size, ca=0.2, cb=0.25, a_add_rate=0.055, b_
         # plt.show()
 
 if __name__ == '__main__':
+    sf = 0.85
+    caf = 0.98
     for nsteps in [10000]:
+
         # reaction_diffusion(nsteps, (50,50), ca=0.4, cb=0.2, a_add_rate=0.039, b_add_rate=-0.104, plot_on=True)
-        # reaction_diffusion(nsteps, (50,50), ca=0.4, cb=0.2, a_add_rate=0.039, b_add_rate=-0.104, plot_on=True)
-        reaction_diffusion(nsteps, (50,50), ca=0.4, cb=0.2, a_add_rate=0.055, b_add_rate=-0.117, plot_on=True)
+        reaction_diffusion(nsteps, (50,50), ca=0.4*caf, cb=0.2*caf, a_add_rate=0.039*sf, b_add_rate=-0.104*sf, plot_on=True)
+        # reaction_diffusion(nsteps, (50,50), ca=0.4, cb=0.2, a_add_rate=0.055, b_add_rate=-0.117, plot_on=True)
     plt.show()
