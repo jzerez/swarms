@@ -38,9 +38,9 @@ class Robot(object):
 
         # Kernel for detecting if an robot is on the edge
         # A robot is on the edge if it has 5 or fewer robot neighbors 
-        self.edgeKernel = np.array([[-1, -1, -1],
+        self.edgeKernel = np.array([[-1, -1,-1],
                                     [-1, 6, -1],
-                                    [-1, -1, -1]])
+                                    [-1, -1,-1]])
 
         # Bool to keep track of if the robot is on the edge or not
         self.isOnEdge = False
