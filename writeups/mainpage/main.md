@@ -20,23 +20,22 @@ Reaction diffusion patterns arise through a number of different phenomena: diffu
 
 Over time, the chemicals are allowed to diffuse, meaning that areas of high concentrations will tend to flatten out over time. Diffusion at a location is proportional to the divergence at that location. 
 
-<img src="https://latex.codecogs.com/gif.latex?\text{Diffusion} \propto \nabla \cdot A" /> 
+![dis](https://latex.codecogs.com/gif.latex?\text{Diffusion}\propto\nabla\cdot%20A)
 
 Chemicals are also allowed to react with each other. In our case, chemical `A` forms chemical `B`, as dictated by the following equation:
 
-<img src="https://latex.codecogs.com/gif.latex?\\text{Reaction} = AB^2" /> 
+![tex](https://latex.codecogs.com/gif.latex?\text{Reaction}=AB^2) 
 
 Finally, we artificially limit chemical concentrations by constantly adding in chemical `A` and constantly removing chemical `B` in order to ensure the reaction-diffusion system can keep going without achieving a boring equilibrium point. 
 
 If we add all of these terms up, we find that the rate of change for chemical `A` is:
 
-<img src="https://latex.codecogs.com/gif.latex?\frac{\de
-lta A}{\delta t}= c_A \nabla \cdot A - AB^2 + l_A (1-A)" /> 
+![tex](https://latex.codecogs.com/gif.latex?\frac{\delta%20A}{\delta%20t}=c_A\nabla\cdot%20A-AB^2+l_A(1-A))
 \
 \
 And similarly for chemical `B`:
 
-<img src="https://latex.codecogs.com/gif.latex?\frac{\delta B}{\delta t}= c_B \nabla \cdot A + AB^2 + l_B B " /> 
+![tex](https://latex.codecogs.com/gif.latex?\frac{\delta%20B}{\delta%20t}=c_B\nabla\cdot%20A-AB^2+l_B(B))
 
 \
 \
