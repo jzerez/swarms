@@ -20,7 +20,7 @@ Reaction diffusion patterns arise through a number of different phenomena: diffu
 
 Over time, the chemicals are allowed to diffuse, meaning that areas of high concentrations will tend to flatten out over time. Diffusion at a location is proportional to the divergence at that location. 
 
-![dis](https://latex.codecogs.com/gif.latex?\text{Diffusion}\propto\nabla\cdot%20A)
+![dis](https://latex.codecogs.com/gif.latex?\text{Diffusion}%20\propto%20\nabla%20\cdot%20A)
 
 Chemicals are also allowed to react with each other. In our case, chemical `A` forms chemical `B`, as dictated by the following equation:
 
