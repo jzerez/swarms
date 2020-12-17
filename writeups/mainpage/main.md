@@ -45,9 +45,13 @@ In both equations, the first term corresponds to diffusion of the chemical and i
 
 Below are some examples of reaction-diffusion patterns:
 
-| ![png](../../media/images/4500_0.039_0.104.png)                                               | ![png](../../media/images/4500_0.055_0.117.png)                                               |
-|--------------------------------------------------------|--------------------------------------------------------|
-| `ca=0.5, cb=0.25, a_add_rate=0.039, b_add_rate=-0.104` | `ca=0.5, cb=0.25, a_add_rate=0.055, b_add_rate=-0.117` |
+![png](../../media/images/4500_0.039_0.104.png)
+`ca=0.5, cb=0.25, a_add_rate=0.039, b_add_rate=-0.104`
+
+</br>
+
+![png](../../media/images/4500_0.055_0.117.png)
+`ca=0.5, cb=0.25, a_add_rate=0.055, b_add_rate=-0.117`
 <!-- 
 | ![png]() | ![png]() |
 | ---------- | --------- |
