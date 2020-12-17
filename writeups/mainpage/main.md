@@ -44,9 +44,14 @@ And similarly for chemical `B`:
 In both equations, the first term corresponds to diffusion of the chemical and is proportional to the divergence of that chemical. The second term is the reaction, and the final term is the artificial chemical limiting. Note, we refer to `lA` and `lB` as `a_add_rate` and `b_add_rate` in this project. 
 
 Below are some examples of reaction-diffusion patterns:
-| ![png](../../media/images/4500_0.039_0.104.png) | ![png](../../media/images/4500_0.055_0.117.png) |
-| ---------- | --------- |
+
+| ![png](../../media/images/4500_0.039_0.104.png)                                               | ![png](../../media/images/4500_0.055_0.117.png)                                               |
+|--------------------------------------------------------|--------------------------------------------------------|
 | `ca=0.5, cb=0.25, a_add_rate=0.039, b_add_rate=-0.104` | `ca=0.5, cb=0.25, a_add_rate=0.055, b_add_rate=-0.117` |
+<!-- 
+| ![png]() | ![png]() |
+| ---------- | --------- |
+| `ca=0.5, cb=0.25, a_add_rate=0.039, b_add_rate=-0.104` | `ca=0.5, cb=0.25, a_add_rate=0.055, b_add_rate=-0.117` | -->
 
 
 For more information about Reaction-Diffusion, see our [first blogpost](../blogpost1/blogpost1.md) on the subject. 
