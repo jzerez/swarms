@@ -1,8 +1,10 @@
 ## [Home](https://jzerez.github.io/swarms/mainpage) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Blog Post 1](https://jzerez.github.io/swarms/blogpost1) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Blog Post 2](https://jzerez.github.io/swarms/blogpost2)
 # Swarms
-*ENGR3590: A Computational Introduction to Robotics, Olin College of Engineering, FA2020*
+**ENGR3590: A Computational Introduction to Robotics, Olin College of Engineering, FA2020**
 
 *Nathan Estill, Jonathan Zerez*
+
+<br />
 
 In this project, we set out to create a simulated decentralized robot swarm that would exhibit self-assembling properties. Specifically, we wanted to replicate morphogenesis, the process by which cells are able to self-organize themselves in order to form complex tissues and organs through local interactions alone. This is of great interest to us, as decentralized systems are full of complexity and are very different from classical robotics. Decentralized swarms offer a number of really cool advantages in that they are very robust to external noise, damage to a number of individual agents within the swarm, and unpredictable variations in the environment. 
 
@@ -11,10 +13,10 @@ For this project, we created a 2D simulation of simple robotic agents on a grid 
 
 We accomplished this by first implementing a simulated reaction-diffusion system among the robotic agents. This would create virtual reaction-diffusion patterns in the swarm of areas with high and low chemical concentrations. From here, we instructed robots on the edge of the swarm to move until they were able to find locations of sufficiently high chemical concentrations. The movement of the agents in some cases, helped the reaction-diffusion patterns to further evolve, driving the entire structure of the swarm to change over time. 
 
-This project was inspired by [*Morphogenesis in Robot Swarms*](https://robotics.sciencemag.org/content/3/25/eaau9178) by I. Slavkov et. al. They successfully modeled and physically implemented a Kilobot ADD LINK swarm that underwent simulated reaction-diffusion using virtual chemicals, and exhibited complex emergent behavior of self assembly. We set out to replicate this work and to see if we could produce any patterns that were more interesting.
+This project was inspired by [*Morphogenesis in Robot Swarms*](https://robotics.sciencemag.org/content/3/25/eaau9178) by I. Slavkov et. al. They successfully modeled and physically implemented a [Kilobot](https://www.k-team.com/mobile-robotics-products/kilobot) swarm that underwent simulated reaction-diffusion using virtual chemicals, and exhibited complex emergent behavior of self assembly. We set out to replicate this work and to see if we could produce any patterns that were more interesting.
 
 ## Theory: Reaction-Diffusion
-Reaction-Diffusion was used to create the patterns that drove the movement patterns of the robot. As it is an important part of the project, we will briefly decribe what a Reaction-Diffusion system is and how it works in this section below. 
+Reaction-Diffusion was used to create the patterns that drove the movement patterns of the robot. As it is an important part of the project, we will briefly describe what a Reaction-Diffusion system is and how it works in this section below. 
 
 Reaction diffusion patterns arise through a number of different phenomena: diffusion, chemical reaction, and artificial chemical limiting. In our implementation, there are two chemical concentrations that are associated with each robot in the grid. We call them chemical `A` and chemical `B`.
 
@@ -73,19 +75,17 @@ The simulation is tasked with updating the neighbors to each robot. Because we s
 
 ![Neighbors](get_neighbors.png)
 
-The simulation is At each time step, each robot calculates the reaction and diffusion of its two chemicals and updates itself.
-
 ### Reaction Diffusion Update
 At each time step, all of the robots update their chemical concentrations. To do this, we start by having each robot calculate its chemical divergence from its neighbors. This means essentially taking the difference between its own chemical concentrations and the chemical concentrations of its neighbors. This can be seen more in the figure below.
 
 ![div](calc_div.png)
 
-Then we calculate the reaction, which reduces the concentration of A and increases the concentration of B as the chemical A reacts to form chemical B. 
+Then we calculate the reaction, which reduces the concentration of `A` and increases the concentration of `B` as the chemical `A` reacts to form chemical `B`. 
 
-Then we modify the robot's concentrations of A and B based on the divergence and reaction we calculated earlier, as well as a static amount of A that we add and B that we remove to offset the overall reaction of A that turns into B.
+Then we modify the robot's concentrations of `A` and `B` based on the divergence and reaction we calculated earlier, as well as a static amount of `A` that we add and `B` that we remove to offset the overall reaction of `A` that turns into `B`.
 
 ### Robot Movement
-Because we want the robots to spatially form interesting shapes, they have to move in a specific way. To start, we must pick a robot that is supposed to move. We first randomly select a robot from the list of edge robots that is also not near a high concentration of chemical B (typical threshold value of `B` is 0.06)
+Because we want the robots to spatially form interesting shapes, they have to move in a specific way. To start, we must pick a robot that is supposed to move. We first randomly select a robot from the list of edge robots that is also not near a high concentration of chemical `B` (typical threshold value of `B` is 0.06)
 
 To move the robot, we randomly select a adjacent empty grid space that is also adjacent to another robot in the 3x3 grid. This space also cannot be the space the robot just came from. We calculate this using the following kernel and convolving it against the neighbors of the current robot, where we use 1's to represent neighboring robots, and 0's to represent empty grid spaces. 
  
@@ -93,41 +93,44 @@ To move the robot, we randomly select a adjacent empty grid space that is also a
  
 The robot moves to this space and makes a note of all of its previous and new neighbors. Each of these neighbors recalculates whether it is on the edge or not, and we modify the edge robots set to contain any robots that are now on the edge or remove any robots that are no longer on the edge. 
 
-If the moving robot is now near a high concentration of B, we signal to look for a new robot in the next time step. If not, we continue to move that same robot. This results in robots clustering around high concentrations of B.
+If the moving robot is now near a high concentration of `B`, we signal to look for a new robot in the next time step. If not, we continue to move that same robot. This results in robots clustering around high concentrations of `B`.
 
 Technically, because the `Simulator` class chooses one and only one random robot to be moving at a time, the program is technically not truly decentralized. If we had more time, we could create a method for robots to communicate their movement intentions with their neighbors in order to give rise to spontaneous and truly decentralized movement while avoiding traffic jams. 
 
 ### Results
 Once these code aspects were working, we changed the reaction diffusion parameters to get interesting patterns to form. We got the following patterns after a lot of fiddling with the parameters. 
 
-<!-- TODO: more analysis on results -->
-<!-- TODO: Gallery of other animations -->
-
 ![Worm](../../media/animations/0.5_0.25_0.06_-0.124_80000frames.gif)
 
 The parameters for this animation are:
-* cA: 0.5
-* cB: 0.25
-* A add rate: 0.06
-* B add rate: -0.124
+* `cA`: 0.5
+* `cB`: 0.25
+* `a_add_rate`: 0.06
+* `b_add_rate`: -0.124
+
+In this simulation, we tuned the reaction diffusion patterns to give rise to a single line of high concentration that tends to grow over time. Our hope was that as the line of high concentration moved out to the edges of the shape, agents would tend to coallese around them, allowing the line of high concentration to grow further. In practice, we found that the robots do not move fast enough, and the line tends to start to curve off to the side instead. However, we still believe that this is an interesting result because the robots are clearly following the changing chemical gradient. 
 
 ![Polka Dots](../../media/animations/0.43_0.19_0.035_-0.1_10000frames.gif)
 
 The parameters for this animation are:
-* cA: 0.43
-* cB: 0.19
-* A add rate: 0.035
-* B add rate: -0.1
+* `cA`: 0.43
+* `cB`: 0.19
+* `a_add_rate`: 0.035
+* `b_add_rate`: -0.1
+
+In this simulation, we tuned the reaction diffusion patterns to give rise to a series of polka dots or islands of high concentration. This is similar to the pattern used by Slavkov et. al. As the islands of high concentration move towards the edge of the shape, agents tend to from lobes centered around those islands. We believe that if we were able to tune the parameters, we accentuate how much each "lobe" sticks out, creating a more interesting shape. 
 
 ![Worm2](../../media/animations/0.5_0.25_0.06_-0.124_80000frames_1.gif)
 
 The parameters for this animation are:
-* cA: 0.5
-* cB: 0.25
-* A add rate: 0.06
-* B add rate: -0.124
+* `cA`: 0.5
+* `cB`: 0.25
+* `a_add_rate`: 0.06
+* `b_add_rate`: -0.124
 
+This simulation is similar to the first, but exhibits some interesting branching of the line of high concentration.  
 
+In this project, we generated a TON of different graphics and visualizations of the simulation. We created a seperate gallery page where you can see the interesting visuals we've produced along the way. That gallery can be found [here](./gallery). 
 
 
 ## Resources
