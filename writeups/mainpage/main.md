@@ -4,9 +4,10 @@
 
 *Nathan Estill, Jonathan Zerez*
 
+
 <br />
 
-In this project, we set out to create a simulated decentralized robot swarm that would exhibit self-assembling properties. Specifically, we wanted to replicate morphogenesis, the process by which cells are able to self-organize themselves in order to form complex tissues and organs through local interactions alone. This is of great interest to us, as decentralized systems are full of complexity and are very different from classical robotics. Decentralized swarms offer a number of really cool advantages in that they are very robust to external noise, damage to a number of individual agents within the swarm, and unpredictable variations in the environment. 
+In this project, we set out to create a simulated decentralized robot swarm that would exhibit self-assembling properties. Specifically, we wanted to replicate morphogenesis, the process by which cells are able to self-organize themselves in order to form complex tissues and organs through local interactions alone. This is of great interest to us, as decentralized systems are full of complexity, and are quite different from centralized robotic systems. Decentralized swarms offer a number of really cool advantages in that they are very robust to external noise, damage to a number of individual agents within the swarm, and unpredictable variations in the environment. 
 
 ## Introduction
 For this project, we created a 2D simulation of simple robotic agents on a grid world. These agents are allowed to communicate and sense their nearest neighbors, and are allowed to move with discrete steps around the grid. By implementing that dictate how the robots interact with each other and how they move, we are able to get the swarm to self assemble into complex shapes. 
