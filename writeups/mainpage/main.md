@@ -1,3 +1,9 @@
+---
+title: MAIN PAGE
+layout: template
+filename: main.md
+--- 
+
 ## [Home](https://jzerez.github.io/swarms/mainpage) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Blog Post 1](https://jzerez.github.io/swarms/blogpost1) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[Blog Post 2](https://jzerez.github.io/swarms/blogpost2)
 # Swarms
 **ENGR3590: A Computational Introduction to Robotics, Olin College of Engineering, FA2020**
